@@ -1,6 +1,6 @@
 # import wandb
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.layers import Input, Dense, Conv2D
 
 import gym
 import argparse

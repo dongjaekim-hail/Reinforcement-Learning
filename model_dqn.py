@@ -111,11 +111,11 @@ class Agent:
 		self.action_dim = self.env.action_space.n
 
 		# DNN case
-		self.state_dim = np.prod(self.env.observation_space.shape)
-		self.model = ActionStateModel(self.state_dim, self.action_dim)
-		self.target_model = ActionStateModel(self.state_dim, self.action_dim)
+		# self.state_dim = np.prod(self.env.observation_space.shape)
+		# self.model = ActionStateModel(self.state_dim, self.action_dim)
+		# self.target_model = ActionStateModel(self.state_dim, self.action_dim)
 
-		# CNN case
+		# # CNN case
 		self.state_dim = self.env.observation_space.shape
 		self.model = ActionStateCNNModel(self.state_dim, self.action_dim)
 		self.target_model = ActionStateCNNModel(self.state_dim, self.action_dim)
@@ -138,10 +138,10 @@ class Agent:
 	def train(self, max_episodes=1000, render_episodes=100):
 		for ep in range(max_episodes):
 			done, total_reward = False, 0
-			state = self.env.reset()
+			state, _ = self.env.reset()
 			while not done:
 				action = self.model.get_action(state)
-				next_state, reward, done, _ = self.env.step(action)
+				next_state, reward, done, _, _ = self.env.step(action)
 				self.buffer.put(state, action, reward * 0.01, next_state, done)
 				total_reward += reward
 				state = next_state
@@ -150,12 +150,12 @@ class Agent:
 			self.target_update()
 			print('EP{} EpisodeReward={}'.format(ep, total_reward))
 			# wandb.log({'Reward': total_reward})
-			if (max_episodes+1) % render_episodes == 0:
-				state = self.env.reset()
+			if (ep+1) % render_episodes == 0:
+				state, _ = self.env.reset()
 				while not done:
-					env.render()
+					self.env.render()
 					action = self.model.get_action(state)
-					next_state, reward, done, _ = self.env.step(action)
+					next_state, reward, done, _, _  = self.env.step(action)
 
 
 
